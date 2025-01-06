@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DailyReport } from "@/components/DailyReport";
-import { AppointmentForm } from "@/components/AppointmentForm";
+import { AppointmentForm, Appointment } from "@/components/AppointmentForm";
 import { MonthlyCalendar } from "@/components/MonthlyCalendar";
 import { MonthlyReport } from "@/components/MonthlyReport";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,11 @@ import { Calendar, FileText } from "lucide-react";
 
 const Index = () => {
   const [activeView, setActiveView] = useState<"daily" | "calendar" | "report">("daily");
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+
+  const handleNewAppointment = (appointment: Appointment) => {
+    setAppointments(prev => [...prev, appointment]);
+  };
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -34,13 +39,13 @@ const Index = () => {
             Relatório
           </Button>
         </div>
-        <AppointmentForm />
+        <AppointmentForm onAppointmentCreated={handleNewAppointment} />
       </div>
 
       <div className="grid gap-6">
-        {activeView === "daily" && <DailyReport />}
+        {activeView === "daily" && <DailyReport appointments={appointments} />}
         {activeView === "calendar" && <MonthlyCalendar />}
-        {activeView === "report" && <MonthlyReport />}
+        {activeView === "report" && <MonthlyReport appointments={appointments} />}
       </div>
     </div>
   );
