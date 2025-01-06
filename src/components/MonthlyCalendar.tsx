@@ -3,7 +3,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ptBR } from "date-fns/locale";
-import { isSameDay } from "date-fns";
+import { isSameDay, isThisMonth } from "date-fns";
 import { Appointment } from "./AppointmentForm";
 
 type MonthlyCalendarProps = {
@@ -20,22 +20,57 @@ export const MonthlyCalendar = ({ appointments }: MonthlyCalendarProps) => {
         .sort((a, b) => a.time.localeCompare(b.time))
     : [];
 
+  // Filtrar agendamentos do mês atual
+  const currentMonthAppointments = appointments.filter(appointment => 
+    isThisMonth(appointment.date)
+  );
+
+  // Calcular valor total dos serviços do mês
+  const totalMonthValue = currentMonthAppointments.reduce((total, appointment) => 
+    total + Number(appointment.value), 0
+  );
+
   return (
     <div className="grid gap-6 md:grid-cols-2">
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Calendário Mensal</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={setDate}
-            locale={ptBR}
-            className="rounded-md border"
-          />
-        </CardContent>
-      </Card>
+      <div className="space-y-6">
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>Resumo do Mês</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 rounded-lg bg-secondary">
+                <p className="text-sm text-muted-foreground">Total de Agendamentos</p>
+                <p className="text-2xl font-bold">{currentMonthAppointments.length}</p>
+              </div>
+              <div className="p-4 rounded-lg bg-secondary">
+                <p className="text-sm text-muted-foreground">Valor Total</p>
+                <p className="text-2xl font-bold">
+                  {new Intl.NumberFormat('pt-BR', { 
+                    style: 'currency', 
+                    currency: 'BRL' 
+                  }).format(totalMonthValue)}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>Calendário Mensal</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              locale={ptBR}
+              className="rounded-md border"
+            />
+          </CardContent>
+        </Card>
+      </div>
 
       <Card className="w-full">
         <CardHeader>
@@ -67,7 +102,12 @@ export const MonthlyCalendar = ({ appointments }: MonthlyCalendarProps) => {
                       <span className="text-primary font-medium">{appointment.time}</span>
                       <div>
                         <p className="font-medium">{appointment.client}</p>
-                        <p className="text-sm text-muted-foreground">{appointment.service}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {new Intl.NumberFormat('pt-BR', { 
+                            style: 'currency', 
+                            currency: 'BRL' 
+                          }).format(Number(appointment.value))}
+                        </p>
                       </div>
                     </div>
                   </div>

@@ -13,7 +13,7 @@ export type Appointment = {
   client: string;
   date: Date;
   time: string;
-  service: string;
+  value: string; // Changed from service to value
 };
 
 type AppointmentFormProps = {
@@ -26,7 +26,7 @@ export const AppointmentForm = ({ onAppointmentCreated }: AppointmentFormProps) 
   const [formData, setFormData] = useState({
     client: "",
     time: "",
-    service: "",
+    value: "", // Changed from service to value
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -38,18 +38,17 @@ export const AppointmentForm = ({ onAppointmentCreated }: AppointmentFormProps) 
     }
 
     const newAppointment: Appointment = {
-      id: Date.now(), // Usando timestamp como ID temporário
+      id: Date.now(),
       client: formData.client,
       date: date,
       time: formData.time,
-      service: formData.service,
+      value: formData.value, // Changed from service to value
     };
 
     onAppointmentCreated(newAppointment);
     toast.success("Agendamento realizado com sucesso!");
     
-    // Resetar formulário
-    setFormData({ client: "", time: "", service: "" });
+    setFormData({ client: "", time: "", value: "" });
     setDate(undefined);
     setOpen(false);
   };
@@ -96,11 +95,14 @@ export const AppointmentForm = ({ onAppointmentCreated }: AppointmentFormProps) 
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="service">Serviço</Label>
+            <Label htmlFor="value">Valor</Label>
             <Input 
-              id="service"
-              value={formData.service}
-              onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+              id="value"
+              type="number"
+              min="0"
+              step="0.01"
+              value={formData.value}
+              onChange={(e) => setFormData({ ...formData, value: e.target.value })}
               required 
             />
           </div>
