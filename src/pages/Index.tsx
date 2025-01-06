@@ -44,7 +44,7 @@ const Index = () => {
 
       <div className="grid gap-6">
         {activeView === "daily" && <DailyReport appointments={appointments} />}
-        {activeView === "calendar" && <MonthlyCalendar />}
+        {activeView === "calendar" && <MonthlyCalendar appointments={appointments} />}
         {activeView === "report" && <MonthlyReport appointments={appointments} />}
       </div>
     </div>
