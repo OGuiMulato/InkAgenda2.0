@@ -3,6 +3,7 @@ import { DailyReport } from "@/components/DailyReport";
 import { AppointmentForm, Appointment } from "@/components/AppointmentForm";
 import { MonthlyCalendar } from "@/components/MonthlyCalendar";
 import { MonthlyReport } from "@/components/MonthlyReport";
+import { FinancialForecast } from "@/components/FinancialForecast";
 import { Button } from "@/components/ui/button";
 import { Calendar, FileText } from "lucide-react";
 
@@ -42,11 +43,14 @@ const Index = () => {
         <AppointmentForm onAppointmentCreated={handleNewAppointment} />
       </div>
 
-      <div className="grid gap-6">
-        {activeView === "daily" && <DailyReport appointments={appointments} />}
-        {activeView === "calendar" && <MonthlyCalendar appointments={appointments} />}
-        {activeView === "report" && <MonthlyReport appointments={appointments} />}
-      </div>
+      {activeView === "daily" && (
+        <div className="grid gap-6">
+          <FinancialForecast appointments={appointments} />
+          <DailyReport appointments={appointments} />
+        </div>
+      )}
+      {activeView === "calendar" && <MonthlyCalendar appointments={appointments} />}
+      {activeView === "report" && <MonthlyReport appointments={appointments} />}
     </div>
   );
 };

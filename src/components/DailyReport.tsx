@@ -41,7 +41,9 @@ export const DailyReport = ({ appointments }: DailyReportProps) => {
                     <span className="text-primary font-medium">{appointment.time}</span>
                     <div>
                       <p className="font-medium">{appointment.client}</p>
-                      <p className="text-sm text-muted-foreground">{appointment.service}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(appointment.value))}
+                      </p>
                     </div>
                   </div>
                 </div>
