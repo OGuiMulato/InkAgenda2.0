@@ -56,9 +56,9 @@ export const MonthlyReport = ({ appointments }: MonthlyReportProps) => {
         
         const appointmentDate = format(appointment.date, 'dd/MM/yyyy');
         doc.text(`${index + 1}. Cliente: ${appointment.client}`, 20, yPosition);
-        doc.text(`   Data: ${appointmentDate}`, 20, yPosition + 5);
-        doc.text(`   Hora: ${appointment.Time}`, 20, yPosition + 5);
-        doc.text(`   Valor: R$ ${Number(appointment.value).toFixed(2)}`, 20, yPosition + 10);
+        doc.text(`   Data: ${appointmentDate}`, 20, yPosition + 20);
+        doc.text(`   Hora: ${appointment.time}`, 20, yPosition + 20);
+        doc.text(`   Valor: R$ ${Number(appointment.value).toFixed(2)}`, 20, yPosition + 10); 
         
         yPosition += 20;
       });
