@@ -3,12 +3,15 @@ import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
 import { toast } from "sonner";
 import { Appointment } from "./AppointmentForm";
-import { isThisMonth, format } from "date-fns";
+import { format, isThisMonth, compareAsc } from 'date-fns';
 import jsPDF from "jspdf";
 
 type MonthlyReportProps = {
   appointments: Appointment[];
 };
+
+// Função para comparar datas
+const compareDates = (a, b) => compareAsc(new Date(a.date), new Date(b.date));
 
 export const MonthlyReport = ({ appointments }: MonthlyReportProps) => {
   const handleExportPDF = () => {
@@ -27,10 +30,10 @@ export const MonthlyReport = ({ appointments }: MonthlyReportProps) => {
       doc.setFontSize(12);
       doc.text(`Data do relatório: ${format(new Date(), 'dd/MM/yyyy')}`, 20, 30);
       
-      // Filtrar agendamentos do mês
-      const monthlyAppointments = appointments.filter(appointment => 
-        isThisMonth(appointment.date)
-      );
+      // Filtrar e ordenar agendamentos do mês
+      const monthlyAppointments = appointments
+        .filter(appointment => isThisMonth(appointment.date))
+        .sort(compareDates);
       
       // Calcular totais
       const totalRevenue = monthlyAppointments.reduce((total, appointment) => 
@@ -54,58 +57,7 @@ export const MonthlyReport = ({ appointments }: MonthlyReportProps) => {
           yPosition = 20;
         }
         
-        const appointmentDate = format(appointment.date, 'dd/MM/yyyy');
+        const appointmentDate = format(new Date(appointment.date), 'dd/MM/yyyy');
         doc.text(`${index + 1}. Cliente: ${appointment.client}`, 20, yPosition);
         doc.text(`   Data: ${appointmentDate}`, 20, yPosition + 5);
-        doc.text(`   Hora: ${appointment.time}`, 20, yPosition + 10);
-        doc.text(`   Valor: R$ ${Number(appointment.value).toFixed(2)}`, 20, yPosition + 15); 
-        
-        yPosition += 20;
-      });
-      
-      // Salvar o PDF
-      doc.save(`relatorio-mensal-${format(new Date(), 'MM-yyyy')}.pdf`);
-      
-      toast.success("Relatório exportado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao exportar PDF:", error);
-      toast.error("Erro ao exportar o relatório. Tente novamente.");
-    }
-  };
-
-  // Filtrar apenas os agendamentos do mês atual
-  const monthlyAppointments = appointments.filter(appointment => 
-    isThisMonth(appointment.date)
-  );
-
-  // Calcular o faturamento total somando os valores dos agendamentos
-  const totalRevenue = monthlyAppointments.reduce((total, appointment) => 
-    total + Number(appointment.value), 0
-  );
-
-  return (
-    <Card className="w-full">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Relatório Mensal</CardTitle>
-        <Button variant="outline" onClick={handleExportPDF}>
-          <FileText className="w-4 h-4 mr-2" />
-          Exportar PDF
-        </Button>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 rounded-lg bg-secondary">
-              <p className="text-sm text-muted-foreground">Total de Agendamentos</p>
-              <p className="text-2xl font-bold">{monthlyAppointments.length}</p>
-            </div>
-            <div className="p-4 rounded-lg bg-secondary">
-              <p className="text-sm text-muted-foreground">Faturamento</p>
-              <p className="text-2xl font-bold">R$ {totalRevenue}</p>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+        doc.text(`   Hora: ${appointment.time}`, 20, yPosition
