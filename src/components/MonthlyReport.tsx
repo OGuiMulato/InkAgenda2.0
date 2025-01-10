@@ -19,9 +19,10 @@ export const MonthlyReport = ({ appointments }: MonthlyReportProps) => {
     isThisMonth(appointment.date)
   );
 
-  // Calcular o faturamento (exemplo simples - você pode ajustar conforme necessário)
-  const averageAppointmentValue = 50; // Valor médio por agendamento
-  const totalRevenue = monthlyAppointments.length * averageAppointmentValue;
+  // Calcular o faturamento total somando os valores dos agendamentos
+  const totalRevenue = monthlyAppointments.reduce((total, appointment) => 
+    total + Number(appointment.value), 0
+  );
 
   return (
     <Card className="w-full">
